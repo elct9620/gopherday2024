@@ -3,13 +3,23 @@ package v1
 import (
 	"github.com/elct9620/gopherday2024/internal/app/rest"
 	"github.com/go-chi/chi/v5"
+	"github.com/google/wire"
 )
+
+type Route rest.Route
+
+var RouteSet = wire.NewSet(
+	ProvideRotues,
+	New,
+)
+
+var _ rest.Router = &Router{}
 
 type Router struct {
 	*chi.Mux
 }
 
-func New(routes ...rest.Route) *Router {
+func New(routes ...Route) *Router {
 	r := chi.NewRouter()
 
 	for _, route := range routes {
@@ -21,4 +31,10 @@ func New(routes ...rest.Route) *Router {
 
 func (r *Router) Namespace() string {
 	return "/v1"
+}
+
+func ProvideRotues() []Route {
+	return []Route{
+		NewGetEvents(),
+	}
 }
