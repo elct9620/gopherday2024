@@ -9,7 +9,13 @@ import (
 var RestSet = wire.NewSet(
 	v1.RouteSet,
 	ProvideRestRouters,
-	rest.New,
+	rest.DefaultSet,
+)
+
+var RestTestSet = wire.NewSet(
+	v1.RouteSet,
+	ProvideRestRouters,
+	rest.TestSet,
 )
 
 func ProvideRestRouters(

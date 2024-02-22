@@ -9,9 +9,9 @@ import (
 	"github.com/google/wire"
 )
 
-func Initialize() (*chi.Mux, error) {
+func InitializeTest() (*chi.Mux, error) {
 	wire.Build(
-		app.RestSet,
+		app.RestTestSet,
 	)
 	return nil, nil
 }

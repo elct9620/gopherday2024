@@ -15,10 +15,10 @@ import (
 
 // Injectors from wire.go:
 
-func Initialize() (*chi.Mux, error) {
+func InitializeTest() (*chi.Mux, error) {
 	v := v1.ProvideRotues()
 	router := v1.New(v...)
 	v2 := app.ProvideRestRouters(router)
-	mux := rest.New(v2...)
+	mux := rest.NewTest(v2...)
 	return mux, nil
 }

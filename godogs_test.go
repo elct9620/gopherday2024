@@ -62,7 +62,7 @@ func (feat *HttpFeature) theResponseBodyShouldBe(doc *godog.DocString) error {
 }
 
 func InitializeScenario(s *godog.ScenarioContext) {
-	rest, err := app.Initialize()
+	rest, err := app.InitializeTest()
 	if err != nil {
 		panic(err)
 	}
