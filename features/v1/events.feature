@@ -14,3 +14,12 @@ Feature: Events
       """
     Then the response json should have "id"
     Then the response status code should be 200
+
+  Scenario: When get the "/v1/events" then it should return array with one element
+    When I make a POST request to "/v1/events" with the body
+      """
+      {}
+      """
+    And I make a GET request to "/v1/events"
+    Then the response json should have "[].id"
+    Then the response status code should be 200
