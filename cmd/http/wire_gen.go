@@ -10,6 +10,7 @@ import (
 	"github.com/elct9620/gopherday2024/internal/app"
 	"github.com/elct9620/gopherday2024/internal/app/rest"
 	"github.com/elct9620/gopherday2024/internal/app/rest/v1"
+	"github.com/elct9620/gopherday2024/internal/repository"
 	"github.com/elct9620/gopherday2024/internal/usecase"
 	"github.com/go-chi/chi/v5"
 )
@@ -17,7 +18,8 @@ import (
 // Injectors from wire.go:
 
 func Initialize() (*chi.Mux, error) {
-	eventQuery := usecase.NewEventQuery()
+	inMemoryEventRepository := repository.NewInMemoryEventRepository()
+	eventQuery := usecase.NewEventQuery(inMemoryEventRepository)
 	v := v1.ProvideRotues(eventQuery)
 	router := v1.New(v...)
 	v2 := app.ProvideRestRouters(router)
