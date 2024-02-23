@@ -39,5 +39,6 @@ func ProvideRotues(
 ) []Route {
 	return []Route{
 		NewGetEvents(eventQuery),
+		NewPostEvents(),
 	}
 }

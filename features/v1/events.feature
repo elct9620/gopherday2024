@@ -6,3 +6,16 @@ Feature: Events
       []
       """
     Then the response status code should be 200
+
+  Scenario: When post the "/v1/events" then it should return ok
+    When I make a POST request to "/v1/events" with the body
+      """
+      {}
+      """
+    Then the response body should be
+      """
+      {
+        "ok": true
+      }
+      """
+    Then the response status code should be 200

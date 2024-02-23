@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/cucumber/godog"
@@ -34,6 +35,14 @@ func (feat *HttpFeature) iMakeAGETRequestTo(url string) error {
 	return nil
 }
 
+func (feat *HttpFeature) iMakeAPOSTRequestToWithTheBody(url string, doc *godog.DocString) error {
+	req := httptest.NewRequest("POST", url, strings.NewReader(doc.Content))
+	feat.response = httptest.NewRecorder()
+
+	feat.server.ServeHTTP(feat.response, req)
+	return nil
+}
+
 func (feat *HttpFeature) theResponseStatusCodeShouldBe(statusCode int) error {
 	if feat.response.Code != statusCode {
 		return fmt.Errorf("expected response code to be %d, but actual is %d", statusCode, feat.response.Code)
@@ -51,7 +60,7 @@ func (feat *HttpFeature) theResponseBodyShouldBe(doc *godog.DocString) error {
 
 	actualBody := feat.response.Body.String()
 	if json.Unmarshal([]byte(actualBody), &actual) != nil {
-		return fmt.Errorf("actual response body is not a valid JSON")
+		return fmt.Errorf("actual response body is not a valid JSON: %s", actualBody)
 	}
 
 	if !reflect.DeepEqual(expected, actual) {
@@ -72,6 +81,7 @@ func InitializeScenario(s *godog.ScenarioContext) {
 	}
 
 	s.Step(`^I make a GET request to "([^"]*)"$`, httpFeat.iMakeAGETRequestTo)
+	s.Step(`^I make a POST request to "([^"]*)" with the body$`, httpFeat.iMakeAPOSTRequestToWithTheBody)
 	s.Step(`^the response status code should be (\d+)$`, httpFeat.theResponseStatusCodeShouldBe)
 	s.Step(`^the response body should be$`, httpFeat.theResponseBodyShouldBe)
 }
