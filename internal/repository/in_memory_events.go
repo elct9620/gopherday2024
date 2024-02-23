@@ -22,3 +22,8 @@ func NewInMemoryEventRepository() *InMemoryEventRepository {
 func (r *InMemoryEventRepository) FindAll(ctx context.Context) ([]*entity.Event, error) {
 	return r.entities, nil
 }
+
+func (r *InMemoryEventRepository) Save(ctx context.Context, event *entity.Event) error {
+	r.entities = append(r.entities, event)
+	return nil
+}

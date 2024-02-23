@@ -8,4 +8,5 @@ import (
 
 type EventRepository interface {
 	FindAll(context.Context) ([]*entity.Event, error)
+	Save(context.Context, *entity.Event) error
 }

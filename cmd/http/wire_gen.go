@@ -20,7 +20,7 @@ import (
 func Initialize() (*chi.Mux, error) {
 	inMemoryEventRepository := repository.NewInMemoryEventRepository()
 	eventQuery := usecase.NewEventQuery(inMemoryEventRepository)
-	createEventCommand := usecase.NewCreateEventCommand()
+	createEventCommand := usecase.NewCreateEventCommand(inMemoryEventRepository)
 	v := v1.ProvideRotues(eventQuery, createEventCommand)
 	router := v1.New(v...)
 	v2 := app.ProvideRestRouters(router)

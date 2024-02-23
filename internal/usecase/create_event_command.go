@@ -1,6 +1,11 @@
 package usecase
 
-import "context"
+import (
+	"context"
+
+	"github.com/elct9620/gopherday2024/internal/entity"
+	"github.com/google/uuid"
+)
 
 type CreateEventCommandInput struct {
 }
@@ -10,14 +15,23 @@ type CreateEventCommandOutput struct {
 }
 
 type CreateEventCommand struct {
+	events EventRepository
 }
 
-func NewCreateEventCommand() *CreateEventCommand {
-	return &CreateEventCommand{}
+func NewCreateEventCommand(events EventRepository) *CreateEventCommand {
+	return &CreateEventCommand{
+		events: events,
+	}
 }
 
 func (c *CreateEventCommand) Execute(ctx context.Context, input *CreateEventCommandInput) (*CreateEventCommandOutput, error) {
+	event := entity.NewEvent(uuid.NewString())
+
+	if err := c.events.Save(ctx, event); err != nil {
+		return nil, err
+	}
+
 	return &CreateEventCommandOutput{
-		ID: "645fc1c8-3505-42b5-913d-bf2a84fd70f1",
+		ID: event.ID,
 	}, nil
 }
