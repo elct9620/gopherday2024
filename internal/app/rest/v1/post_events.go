@@ -7,6 +7,10 @@ import (
 	"github.com/elct9620/gopherday2024/internal/usecase"
 )
 
+type PostEventResponse struct {
+	ID string `json:"id"`
+}
+
 type PostEvents struct {
 	createEvent *usecase.CreateEventCommand
 }
@@ -42,6 +46,17 @@ func (e *PostEvents) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	response := PostEventResponse{
+		ID: res.ID,
+	}
+
+	enc := json.NewEncoder(w)
+	err = enc.Encode(response)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
-	w.Write(json.RawMessage(`{"ok": true}`))
 }

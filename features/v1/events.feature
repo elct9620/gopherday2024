@@ -12,10 +12,5 @@ Feature: Events
       """
       {}
       """
-    Then the response body should be
-      """
-      {
-        "ok": true
-      }
-      """
+    Then the response json should have "id"
     Then the response status code should be 200

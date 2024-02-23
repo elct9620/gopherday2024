@@ -12,6 +12,7 @@ import (
 
 	"github.com/cucumber/godog"
 	app "github.com/elct9620/gopherday2024"
+	"github.com/jmespath/go-jmespath"
 )
 
 var opts = godog.Options{
@@ -70,7 +71,27 @@ func (feat *HttpFeature) theResponseBodyShouldBe(doc *godog.DocString) error {
 	return nil
 }
 
-func InitializeScenario(s *godog.ScenarioContext) {
+func (feat *HttpFeature) theResponseJsonShouldHave(path string) error {
+	var actual any
+
+	actualBody := feat.response.Body.String()
+	if json.Unmarshal([]byte(actualBody), &actual) != nil {
+		return fmt.Errorf("actual response body is not a valid JSON: %s", feat.response.Body.String())
+	}
+
+	res, err := jmespath.Search(path, actual)
+	if err != nil {
+		return fmt.Errorf("failed to search path %s: %s", path, err)
+	}
+
+	if res == nil {
+		return fmt.Errorf(`expected response body to have JMESPath "%s", but actual is %s`, path, actualBody)
+	}
+
+	return nil
+}
+
+func InitializeScenario(ctx *godog.ScenarioContext) {
 	rest, err := app.InitializeTest()
 	if err != nil {
 		panic(err)
@@ -80,10 +101,11 @@ func InitializeScenario(s *godog.ScenarioContext) {
 		server: rest,
 	}
 
-	s.Step(`^I make a GET request to "([^"]*)"$`, httpFeat.iMakeAGETRequestTo)
-	s.Step(`^I make a POST request to "([^"]*)" with the body$`, httpFeat.iMakeAPOSTRequestToWithTheBody)
-	s.Step(`^the response status code should be (\d+)$`, httpFeat.theResponseStatusCodeShouldBe)
-	s.Step(`^the response body should be$`, httpFeat.theResponseBodyShouldBe)
+	ctx.Step(`^I make a GET request to "([^"]*)"$`, httpFeat.iMakeAGETRequestTo)
+	ctx.Step(`^I make a POST request to "([^"]*)" with the body$`, httpFeat.iMakeAPOSTRequestToWithTheBody)
+	ctx.Step(`^the response status code should be (\d+)$`, httpFeat.theResponseStatusCodeShouldBe)
+	ctx.Step(`^the response json should have "([^"]*)"$`, httpFeat.theResponseJsonShouldHave)
+	ctx.Step(`^the response body should be$`, httpFeat.theResponseBodyShouldBe)
 }
 
 func init() {
