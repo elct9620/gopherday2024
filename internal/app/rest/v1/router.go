@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/elct9620/gopherday2024/internal/app/rest"
+	"github.com/elct9620/gopherday2024/internal/usecase"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/wire"
 )
@@ -33,8 +34,10 @@ func (r *Router) Namespace() string {
 	return "/v1"
 }
 
-func ProvideRotues() []Route {
+func ProvideRotues(
+	eventQuery *usecase.EventQuery,
+) []Route {
 	return []Route{
-		NewGetEvents(),
+		NewGetEvents(eventQuery),
 	}
 }
