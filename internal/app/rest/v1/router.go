@@ -36,9 +36,10 @@ func (r *Router) Namespace() string {
 
 func ProvideRotues(
 	eventQuery *usecase.EventQuery,
+	createEventCommand *usecase.CreateEventCommand,
 ) []Route {
 	return []Route{
 		NewGetEvents(eventQuery),
-		NewPostEvents(),
+		NewPostEvents(createEventCommand),
 	}
 }

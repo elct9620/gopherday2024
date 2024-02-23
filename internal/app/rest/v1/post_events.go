@@ -3,13 +3,20 @@ package v1
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/elct9620/gopherday2024/internal/usecase"
 )
 
 type PostEvents struct {
+	createEvent *usecase.CreateEventCommand
 }
 
-func NewPostEvents() *PostEvents {
-	return &PostEvents{}
+func NewPostEvents(
+	createEvent *usecase.CreateEventCommand,
+) *PostEvents {
+	return &PostEvents{
+		createEvent: createEvent,
+	}
 }
 
 func (e *PostEvents) Method() string {
@@ -21,7 +28,20 @@ func (e *PostEvents) Path() string {
 }
 
 func (e *PostEvents) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
+	res, err := e.createEvent.Execute(r.Context(), &usecase.CreateEventCommandInput{})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Add("Content-Type", "application/json")
+
+	isSuccess := len(res.ID) > 0
+	if !isSuccess {
+		w.Write(json.RawMessage(`{"ok": false}`))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 	w.Write(json.RawMessage(`{"ok": true}`))
 }
