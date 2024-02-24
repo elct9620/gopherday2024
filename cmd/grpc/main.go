@@ -2,17 +2,20 @@ package main
 
 import (
 	"net"
-
-	"google.golang.org/grpc"
 )
 
 func main() {
-	listen, err := net.Listen("tcp", "localhost:8080")
+	listen, err := net.Listen("tcp", "0.0.0.0:8080")
 	if err != nil {
 		panic(err)
 	}
 
-	server := grpc.NewServer()
+	server, cleanup, err := Initialize()
+	if err != nil {
+		panic(err)
+	}
+	defer cleanup()
+
 	if err := server.Serve(listen); err != nil {
 		panic(err)
 	}

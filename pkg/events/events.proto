@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package = "github.com/elct9620/gopherday2024/pkg/events";
+
+package events;
+
+service Events {
+  rpc List(ListEventRequest) returns (ListEventResponse);
+}
+
+message ListEventRequest {
+}
+
+message ListEventResponse {
+  repeated Event events = 1;
+}
+
+message Event {
+  string id = 1;
+  string created_at = 2;
+}
