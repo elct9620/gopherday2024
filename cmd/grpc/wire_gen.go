@@ -9,6 +9,7 @@ package main
 import (
 	"github.com/elct9620/gopherday2024/internal/app"
 	"github.com/elct9620/gopherday2024/internal/app/grpc"
+	"github.com/elct9620/gopherday2024/internal/config"
 	"github.com/elct9620/gopherday2024/internal/repository"
 	"github.com/elct9620/gopherday2024/internal/usecase"
 )
@@ -24,7 +25,14 @@ func Initialize() (*app.GrpcServer, func(), error) {
 	eventQuery := usecase.NewEventQuery(boltEventRepository)
 	eventsServer := grpc.NewEventsServer(eventQuery)
 	server := app.ProvideGrpcServer(eventsServer)
-	grpcServer := app.NewGrpcServer(server)
+	viper, err := config.ProvideViper()
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	configConfig := config.ProvideDefaultConfig(viper)
+	grpcServerConfig := app.NewGrpcServerConfig(configConfig)
+	grpcServer := app.NewGrpcServer(server, grpcServerConfig)
 	return grpcServer, func() {
 		cleanup()
 	}, nil

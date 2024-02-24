@@ -11,6 +11,7 @@ import (
 	"github.com/elct9620/gopherday2024/internal/app/rest"
 	"github.com/elct9620/gopherday2024/internal/app/rest/v1"
 	"github.com/elct9620/gopherday2024/internal/app/rest/v2"
+	"github.com/elct9620/gopherday2024/internal/config"
 	"github.com/elct9620/gopherday2024/internal/repository"
 	"github.com/elct9620/gopherday2024/internal/usecase"
 )
@@ -31,7 +32,14 @@ func Initialize() (*app.RestServer, func(), error) {
 	v2Router := v2.New(v3...)
 	v4 := app.ProvideRestRouters(router, v2Router)
 	mux := rest.New(v4...)
-	restServer := app.NewRestServer(mux)
+	viper, err := config.ProvideViper()
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	configConfig := config.ProvideDefaultConfig(viper)
+	restServerConfig := app.NewRestServerConfig(configConfig)
+	restServer := app.NewRestServer(mux, restServerConfig)
 	return restServer, func() {
 		cleanup()
 	}, nil

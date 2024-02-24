@@ -22,3 +22,6 @@ go.work
 
 # BlotDB
 db/*.db
+
+# Config
+config/*.toml

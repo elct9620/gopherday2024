@@ -1,0 +1,5 @@
+[http]
+  address = ":9000"
+
+[grpc]
+  address = ":9001"
