@@ -10,6 +10,7 @@ import (
 	"github.com/elct9620/gopherday2024/internal/app"
 	"github.com/elct9620/gopherday2024/internal/app/rest"
 	"github.com/elct9620/gopherday2024/internal/app/rest/v1"
+	"github.com/elct9620/gopherday2024/internal/app/rest/v2"
 	"github.com/elct9620/gopherday2024/internal/repository"
 	"github.com/elct9620/gopherday2024/internal/usecase"
 	"github.com/go-chi/chi/v5"
@@ -27,8 +28,10 @@ func Initialize() (*chi.Mux, func(), error) {
 	createEventCommand := usecase.NewCreateEventCommand(boltEventRepository)
 	v := v1.ProvideRotues(eventQuery, createEventCommand)
 	router := v1.New(v...)
-	v2 := app.ProvideRestRouters(router)
-	mux := rest.New(v2...)
+	v3 := v2.ProvideRotues(eventQuery)
+	v2Router := v2.New(v3...)
+	v4 := app.ProvideRestRouters(router, v2Router)
+	mux := rest.New(v4...)
 	return mux, func() {
 		cleanup()
 	}, nil

@@ -1,12 +1,16 @@
 package usecase
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
 type EventQueryInput struct {
 }
 
 type Event struct {
-	ID string
+	ID        string
+	CreatedAt time.Time
 }
 
 type EventQueryOutput struct {
@@ -32,7 +36,8 @@ func (q *EventQuery) Execute(ctx context.Context, input *EventQueryInput) (*Even
 	outputEvents := make([]Event, 0, len(events))
 	for _, event := range events {
 		outputEvents = append(outputEvents, Event{
-			ID: event.ID,
+			ID:        event.ID,
+			CreatedAt: event.CreatedAt,
 		})
 	}
 
