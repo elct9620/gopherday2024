@@ -5,10 +5,11 @@ import (
 )
 
 func main() {
-	app, err := Initialize()
+	app, cleanup, err := Initialize()
 	if err != nil {
 		panic(err)
 	}
+	defer cleanup()
 
 	http.ListenAndServe(":8080", app)
 }

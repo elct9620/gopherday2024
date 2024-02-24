@@ -11,11 +11,12 @@ import (
 	"github.com/google/wire"
 )
 
-func Initialize() (*chi.Mux, error) {
+func Initialize() (*chi.Mux, func(), error) {
 	wire.Build(
 		repository.DefaultSet,
 		usecase.DefaultSet,
+		app.DefaultSet,
 		app.RestSet,
 	)
-	return nil, nil
+	return nil, nil, nil
 }

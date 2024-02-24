@@ -17,13 +17,19 @@ import (
 
 // Injectors from wire.go:
 
-func Initialize() (*chi.Mux, error) {
-	inMemoryEventRepository := repository.NewInMemoryEventRepository()
-	eventQuery := usecase.NewEventQuery(inMemoryEventRepository)
-	createEventCommand := usecase.NewCreateEventCommand(inMemoryEventRepository)
+func Initialize() (*chi.Mux, func(), error) {
+	db, cleanup, err := app.ProvideBoltDB()
+	if err != nil {
+		return nil, nil, err
+	}
+	boltEventRepository := repository.NewBoltEventRepository(db)
+	eventQuery := usecase.NewEventQuery(boltEventRepository)
+	createEventCommand := usecase.NewCreateEventCommand(boltEventRepository)
 	v := v1.ProvideRotues(eventQuery, createEventCommand)
 	router := v1.New(v...)
 	v2 := app.ProvideRestRouters(router)
 	mux := rest.New(v2...)
-	return mux, nil
+	return mux, func() {
+		cleanup()
+	}, nil
 }

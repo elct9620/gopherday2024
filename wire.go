@@ -13,7 +13,7 @@ import (
 
 func InitializeTest() (*chi.Mux, error) {
 	wire.Build(
-		repository.DefaultSet,
+		repository.InMemorySet,
 		usecase.DefaultSet,
 		app.RestTestSet,
 	)
