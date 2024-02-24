@@ -13,12 +13,11 @@ import (
 	"github.com/elct9620/gopherday2024/internal/app/rest/v2"
 	"github.com/elct9620/gopherday2024/internal/repository"
 	"github.com/elct9620/gopherday2024/internal/usecase"
-	"github.com/go-chi/chi/v5"
 )
 
 // Injectors from wire.go:
 
-func Initialize() (*chi.Mux, func(), error) {
+func Initialize() (*app.RestServer, func(), error) {
 	db, cleanup, err := app.ProvideBoltDB()
 	if err != nil {
 		return nil, nil, err
@@ -32,7 +31,8 @@ func Initialize() (*chi.Mux, func(), error) {
 	v2Router := v2.New(v3...)
 	v4 := app.ProvideRestRouters(router, v2Router)
 	mux := rest.New(v4...)
-	return mux, func() {
+	restServer := app.NewRestServer(mux)
+	return restServer, func() {
 		cleanup()
 	}, nil
 }

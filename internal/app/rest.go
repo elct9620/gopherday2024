@@ -1,9 +1,12 @@
 package app
 
 import (
+	"net/http"
+
 	"github.com/elct9620/gopherday2024/internal/app/rest"
 	v1 "github.com/elct9620/gopherday2024/internal/app/rest/v1"
 	v2 "github.com/elct9620/gopherday2024/internal/app/rest/v2"
+	"github.com/go-chi/chi/v5"
 	"github.com/google/wire"
 )
 
@@ -30,4 +33,16 @@ func ProvideRestRouters(
 		v1Api,
 		v2Api,
 	}
+}
+
+type RestServer struct {
+	chi.Router
+}
+
+func NewRestServer(router *chi.Mux) *RestServer {
+	return &RestServer{Router: router}
+}
+
+func (s *RestServer) Serve() error {
+	return http.ListenAndServe(":8080", s.Router)
 }

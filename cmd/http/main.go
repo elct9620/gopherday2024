@@ -1,9 +1,5 @@
 package main
 
-import (
-	"net/http"
-)
-
 func main() {
 	app, cleanup, err := Initialize()
 	if err != nil {
@@ -11,5 +7,7 @@ func main() {
 	}
 	defer cleanup()
 
-	http.ListenAndServe(":8080", app)
+	if err := app.Serve(); err != nil {
+		panic(err)
+	}
 }

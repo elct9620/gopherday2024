@@ -8,24 +8,24 @@ package main
 
 import (
 	"github.com/elct9620/gopherday2024/internal/app"
-	grpc2 "github.com/elct9620/gopherday2024/internal/app/grpc"
+	"github.com/elct9620/gopherday2024/internal/app/grpc"
 	"github.com/elct9620/gopherday2024/internal/repository"
 	"github.com/elct9620/gopherday2024/internal/usecase"
-	"google.golang.org/grpc"
 )
 
 // Injectors from wire.go:
 
-func Initialize() (*grpc.Server, func(), error) {
+func Initialize() (*app.GrpcServer, func(), error) {
 	db, cleanup, err := app.ProvideBoltDB()
 	if err != nil {
 		return nil, nil, err
 	}
 	boltEventRepository := repository.NewBoltEventRepository(db)
 	eventQuery := usecase.NewEventQuery(boltEventRepository)
-	eventsServer := grpc2.NewEventsServer(eventQuery)
+	eventsServer := grpc.NewEventsServer(eventQuery)
 	server := app.ProvideGrpcServer(eventsServer)
-	return server, func() {
+	grpcServer := app.NewGrpcServer(server)
+	return grpcServer, func() {
 		cleanup()
 	}, nil
 }
