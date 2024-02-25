@@ -31,13 +31,13 @@ func NewBoltEventRepository(db *bbolt.DB) *BoltEventRepository {
 func (r *BoltEventRepository) FindAll(ctx context.Context) ([]*entity.Event, error) {
 	entities := make([]*entity.Event, 0)
 
-	r.db.View(func(tx *bbolt.Tx) error {
+	err := r.db.View(func(tx *bbolt.Tx) error {
 		b := tx.Bucket([]byte(r.bucketName))
 		if b == nil {
 			return nil
 		}
 
-		b.ForEach(func(k, v []byte) error {
+		return b.ForEach(func(k, v []byte) error {
 			var value BoltEventSchema
 			if err := json.Unmarshal(v, &value); err != nil {
 				return err
@@ -50,9 +50,11 @@ func (r *BoltEventRepository) FindAll(ctx context.Context) ([]*entity.Event, err
 
 			return nil
 		})
-
-		return nil
 	})
+
+	if err != nil {
+		return nil, err
+	}
 
 	return entities, nil
 }

@@ -50,6 +50,4 @@ func (e *GetEvents) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-
-	return
 }

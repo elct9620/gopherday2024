@@ -42,7 +42,11 @@ func (e *PostEvents) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	isSuccess := len(res.ID) > 0
 	if !isSuccess {
-		w.Write(json.RawMessage(`{"ok": false}`))
+		_, err = w.Write(json.RawMessage(`{"ok": false}`))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+
 		return
 	}
 
