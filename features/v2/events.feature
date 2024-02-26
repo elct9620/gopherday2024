@@ -13,6 +13,6 @@ Feature: Events
       {}
       """
     And I make a GET request to "/v2/events"
-    Then the response json should have "[].id"
-    And the response json should have "[].created_at"
+    Then the response json should have "[0].id"
+    And the response json should have "[0].created_at"
     And the response status code should be 200

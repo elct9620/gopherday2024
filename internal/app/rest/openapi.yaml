@@ -1,0 +1,106 @@
+openapi: 3.0.3
+info:
+  title: GopherDay 2024 - Demo
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - description: Local Development
+    url: http://localhost:{port}
+    variables:
+      port:
+        default: '8080'
+  - description: Go Test
+    url: http://example.com
+tags:
+  - name: Events V1
+  - name: Events V2
+  - name: probe
+paths:
+  /livez:
+    get:
+      tags:
+        - probe
+      summary: Check server is alive
+      operationId: getLivez
+      responses:
+        '200':
+          description: Server is alive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Liveness'
+  /v1/events:
+    get:
+      tags:
+        - Events V1
+      summary: Get events
+      operationId: getEventsV1
+      responses:
+        '200':
+          description: return events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventV1'
+    post:
+      tags:
+        - Events V1
+      summary: Create an event
+      operationId: postEventsV1
+      responses:
+        '200':
+          description: an new event is created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventV1'
+  /v2/events:
+    get:
+      tags:
+        - Events V2
+      summary: Get events
+      operationId: getEventsV2
+      responses:
+        '200':
+          description: return events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventV2'
+components:
+  schemas:
+    Liveness:
+      required:
+        - status
+      type: object
+      properties:
+        status:
+          type: string
+          example: ok
+    EventV1:
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          type: string
+          example: 5aa8e465-a673-42c8-9bd7-c3d62bd6bfde
+    EventV2:
+      required:
+        - id
+        - created_at
+      type: object
+      properties:
+        id:
+          type: string
+          example: 5aa8e465-a673-42c8-9bd7-c3d62bd6bfde
+        created_at:
+          type: string
+          example: 2024-02-24T15:47:47.206913+08:00
+  requestBodies:

@@ -21,5 +21,5 @@ Feature: Events
       {}
       """
     And I make a GET request to "/v1/events"
-    Then the response json should have "[].id"
+    Then the response json should have "[0].id"
     And the response status code should be 200

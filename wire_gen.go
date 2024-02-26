@@ -27,6 +27,15 @@ func InitializeTest() (*chi.Mux, error) {
 	v3 := v2.ProvideRotues(eventQuery)
 	v2Router := v2.New(v3...)
 	v4 := app.ProvideRestRouters(router, v2Router)
-	mux := rest.NewTest(v4...)
+	t, err := rest.NewOpenApi()
+	if err != nil {
+		return nil, err
+	}
+	routersRouter, err := rest.NewOpenApiRouter(t)
+	if err != nil {
+		return nil, err
+	}
+	openApiMiddleware := rest.ProvideOpenApiMiddleware(routersRouter)
+	mux := rest.NewTest(v4, openApiMiddleware)
 	return mux, nil
 }

@@ -7,10 +7,12 @@ import (
 )
 
 var DefaultSet = wire.NewSet(
+	OpenApiSet,
 	New,
 )
 
 var TestSet = wire.NewSet(
+	OpenApiSet,
 	NewTest,
 )
 
@@ -19,9 +21,10 @@ type Router interface {
 	chi.Router
 }
 
-func New(routers ...Router) *chi.Mux {
+func New(routers []Router, openApiMiddleware OpenApiMiddleware) *chi.Mux {
 	r := chi.NewRouter()
 
+	r.Use(openApiMiddleware)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
@@ -32,8 +35,11 @@ func New(routers ...Router) *chi.Mux {
 	return r
 }
 
-func NewTest(routers ...Router) *chi.Mux {
+func NewTest(routers []Router, openApiMiddleware OpenApiMiddleware) *chi.Mux {
 	r := chi.NewRouter()
+
+	r.Use(openApiMiddleware)
+	r.Use(middleware.Recoverer)
 
 	for _, router := range routers {
 		r.Mount(router.Namespace(), router)

@@ -31,7 +31,18 @@ func Initialize() (*app.RestServer, func(), error) {
 	v3 := v2.ProvideRotues(eventQuery)
 	v2Router := v2.New(v3...)
 	v4 := app.ProvideRestRouters(router, v2Router)
-	mux := rest.New(v4...)
+	t, err := rest.NewOpenApi()
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	routersRouter, err := rest.NewOpenApiRouter(t)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	openApiMiddleware := rest.ProvideOpenApiMiddleware(routersRouter)
+	mux := rest.New(v4, openApiMiddleware)
 	viper, err := config.ProvideViper()
 	if err != nil {
 		cleanup()
