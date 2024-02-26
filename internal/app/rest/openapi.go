@@ -91,7 +91,6 @@ func ProvideOpenApiMiddleware(router routers.Router) OpenApiMiddleware {
 			err = openapi3filter.ValidateResponse(r.Context(), responseValidationInput)
 			if err != nil {
 				panic(err)
-				return
 			}
 		})
 	}
