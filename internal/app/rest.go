@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/elct9620/gopherday2024/internal/app/rest"
@@ -44,7 +43,6 @@ type RestServerConfig struct {
 }
 
 func NewRestServerConfig(config *config.Config) *RestServerConfig {
-	fmt.Printf("http address: %s\n", config.HttpAddr)
 	return &RestServerConfig{
 		Address: config.HttpAddr,
 	}
