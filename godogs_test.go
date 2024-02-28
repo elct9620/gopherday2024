@@ -38,6 +38,7 @@ func (feat *HttpFeature) iMakeAGETRequestTo(url string) error {
 
 func (feat *HttpFeature) iMakeAPOSTRequestToWithTheBody(url string, doc *godog.DocString) error {
 	req := httptest.NewRequest("POST", url, strings.NewReader(doc.Content))
+	req.Header.Add("Content-Type", "application/json")
 	feat.response = httptest.NewRecorder()
 
 	feat.server.ServeHTTP(feat.response, req)
@@ -91,6 +92,30 @@ func (feat *HttpFeature) theResponseJsonShouldHave(path string) error {
 	return nil
 }
 
+func (feat *HttpFeature) theResponseJsonShouldHaveWithValue(path, value string) error {
+	var actual any
+
+	actualBody := feat.response.Body.String()
+	if json.Unmarshal([]byte(actualBody), &actual) != nil {
+		return fmt.Errorf("actual response body is not a valid JSON: %s", feat.response.Body.String())
+	}
+
+	res, err := jmespath.Search(path, actual)
+	if err != nil {
+		return fmt.Errorf("failed to search path %s: %s", path, err)
+	}
+
+	if res == nil {
+		return fmt.Errorf(`expected response body to have JMESPath "%s", but actual is %s`, path, actualBody)
+	}
+
+	if fmt.Sprintf("%v", res) != value {
+		return fmt.Errorf(`expected response body to have JMESPath "%s" with value "%s", but actual is %v`, path, value, res)
+	}
+
+	return nil
+}
+
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	rest, err := app.InitializeTest()
 	if err != nil {
@@ -104,8 +129,9 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^I make a GET request to "([^"]*)"$`, httpFeat.iMakeAGETRequestTo)
 	ctx.Step(`^I make a POST request to "([^"]*)" with the body$`, httpFeat.iMakeAPOSTRequestToWithTheBody)
 	ctx.Step(`^the response status code should be (\d+)$`, httpFeat.theResponseStatusCodeShouldBe)
-	ctx.Step(`^the response json should have "([^"]*)"$`, httpFeat.theResponseJsonShouldHave)
 	ctx.Step(`^the response body should be$`, httpFeat.theResponseBodyShouldBe)
+	ctx.Step(`^the response json should have "([^"]*)"$`, httpFeat.theResponseJsonShouldHave)
+	ctx.Step(`^the response json should have "([^"]*)" with value "([^"]*)"$`, httpFeat.theResponseJsonShouldHaveWithValue)
 }
 
 func init() {

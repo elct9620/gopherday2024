@@ -73,6 +73,30 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/EventV2'
+  /v3/shipments:
+    post:
+      tags:
+        - Shipments
+      summary: Create a shipment
+      operationId: postShipmentsV3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - id
+              properties:
+                id:
+                  type: string
+                  example: f4eb8e5f-7272-4c5e-a8eb-735969bdd288
+      responses:
+        '200':
+          description: create a shipment success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShipmentV3'
   /v3/shipments/{id}:
     get:
       tags:

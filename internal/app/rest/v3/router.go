@@ -39,5 +39,6 @@ func ProvideRotues(
 ) []Route {
 	return []Route{
 		NewGetShipment(shipmentQuery),
+		NewPostShipments(),
 	}
 }

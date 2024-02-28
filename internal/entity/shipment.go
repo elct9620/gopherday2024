@@ -6,8 +6,8 @@ type ShipmentState string
 
 const (
 	ShipmentStatePending   ShipmentState = "pending"
-	ShipmentStateShipping                = "shipping"
-	ShipmentStateDelivered               = "delivered"
+	ShipmentStateShipping  ShipmentState = "shipping"
+	ShipmentStateDelivered ShipmentState = "delivered"
 )
 
 type Shipment struct {
