@@ -7,7 +7,6 @@ import (
 	"github.com/elct9620/gopherday2024/internal/entity"
 	"github.com/elct9620/gopherday2024/internal/event"
 	"github.com/elct9620/gopherday2024/internal/usecase"
-	"github.com/google/uuid"
 )
 
 var _ usecase.ShipmentRepository = &InMemoryShipmentRepository{}
@@ -37,15 +36,7 @@ func (r *InMemoryShipmentRepository) Find(ctx context.Context, id string) (*enti
 	if len(events) == 0 {
 		return nil, usecase.ErrShipmentNotFound
 	}
-	shipment := entity.NewShipment(id)
-
-	for _, e := range events {
-		switch e := e.(type) {
-		case *event.ShipmentCreatedEvent:
-			createdAt := e.CreatedAt()
-			shipment.UpdatedAt = &createdAt
-		}
-	}
+	shipment := entity.NewShipmentFromEvents(events)
 
 	return shipment, nil
 }
@@ -54,12 +45,9 @@ func (r *InMemoryShipmentRepository) Save(ctx context.Context, shipment *entity.
 	r.mux.Lock()
 	defer r.mux.Unlock()
 
-	event := event.NewShipmentCreatedEvent(
-		uuid.NewString(),
-		shipment.ID,
-		*shipment.UpdatedAt,
-	)
+	events := shipment.PendingEvents()
+	r.events = append(r.events, events...)
+	shipment.ClearPendingEvents()
 
-	r.events = append(r.events, event)
 	return nil
 }
