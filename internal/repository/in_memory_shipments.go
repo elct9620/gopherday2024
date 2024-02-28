@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"sort"
 	"sync"
 
 	"github.com/elct9620/gopherday2024/internal/entity"
@@ -32,6 +33,11 @@ func (r *InMemoryShipmentRepository) Find(ctx context.Context, id string) (*enti
 			events = append(events, e)
 		}
 	}
+
+	// NOTE: events should be sorted by version is better
+	sort.Slice(events, func(i, j int) bool {
+		return events[i].CreatedAt().Before(events[j].CreatedAt())
+	})
 
 	if len(events) == 0 {
 		return nil, usecase.ErrShipmentNotFound
