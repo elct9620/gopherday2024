@@ -16,6 +16,13 @@ go run ./cmd/http
 
 * `GET /v2/events` - List all events
 
+### v3
+
+* `GET /v3/shipments/{id}` - Get a shipment by ID
+* `POST /v3/shipments` - Create a new shipment
+* `PUT /v3/shipments/{id}` - Update a shipment by ID
+* `POST /v3/shipments/{id}/items` - Add an item to a shipment
+
 ## gRPC
 
 ```bash
