@@ -19,4 +19,5 @@ type EventRepository interface {
 
 type ShipmentRepository interface {
 	Find(context.Context, string) (*entity.Shipment, error)
+	Save(context.Context, *entity.Shipment) error
 }

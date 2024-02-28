@@ -19,3 +19,7 @@ func NewInMemoryShipmentRepository() *InMemoryShipmentRepository {
 func (r *InMemoryShipmentRepository) Find(ctx context.Context, id string) (*entity.Shipment, error) {
 	return nil, usecase.ErrShipmentNotFound
 }
+
+func (r *InMemoryShipmentRepository) Save(ctx context.Context, shipment *entity.Shipment) error {
+	return nil
+}

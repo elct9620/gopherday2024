@@ -17,8 +17,12 @@ type Shipment struct {
 }
 
 func NewShipment(id string) *Shipment {
+	// NOTE: apply with created event is better
+	nowTime := time.Now()
+
 	return &Shipment{
-		ID:    id,
-		State: ShipmentStatePending,
+		ID:        id,
+		State:     ShipmentStatePending,
+		UpdatedAt: &nowTime,
 	}
 }

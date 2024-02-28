@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
+
+	"github.com/elct9620/gopherday2024/internal/usecase"
 )
 
 type PostShipmentPayload struct {
@@ -12,10 +13,15 @@ type PostShipmentPayload struct {
 }
 
 type PostShipments struct {
+	createShipmentCommand *usecase.CreateShipmentCommand
 }
 
-func NewPostShipments() *PostShipments {
-	return &PostShipments{}
+func NewPostShipments(
+	createShipmentCommand *usecase.CreateShipmentCommand,
+) *PostShipments {
+	return &PostShipments{
+		createShipmentCommand: createShipmentCommand,
+	}
 }
 
 func (e *PostShipments) Method() string {
@@ -35,12 +41,19 @@ func (e *PostShipments) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
 
-	createdAt := time.Now()
+	output, err := e.createShipmentCommand.Execute(r.Context(), &usecase.CreateShipmentCommandInput{
+		ID: payload.ID,
+	})
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to create shipment: %v", err), http.StatusInternalServerError)
+		return
+	}
+
 	shipment := Shipment{
-		ID:        payload.ID,
-		State:     "pending",
+		ID:        output.ID,
+		State:     output.State,
 		Items:     []ShipmentItem{},
-		UpdatedAt: &createdAt,
+		UpdatedAt: output.UpdatedAt,
 	}
 
 	encoder := json.NewEncoder(w)
