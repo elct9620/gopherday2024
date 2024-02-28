@@ -8,8 +8,8 @@ import (
 var DefaultSet = wire.NewSet(
 	wire.Bind(new(usecase.EventRepository), new(*BoltEventRepository)),
 	NewBoltEventRepository,
-	wire.Bind(new(usecase.ShipmentRepository), new(*InMemoryShipmentRepository)),
-	NewInMemoryShipmentRepository,
+	wire.Bind(new(usecase.ShipmentRepository), new(*BoltShipmentRepository)),
+	NewBoltShipmentRepository,
 )
 
 var InMemorySet = wire.NewSet(
