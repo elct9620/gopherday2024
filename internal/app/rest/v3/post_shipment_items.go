@@ -4,23 +4,25 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/elct9620/gopherday2024/internal/usecase"
 	"github.com/go-chi/chi/v5"
 )
 
 type PostShipmentItemPayload struct {
-	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 
 type PostShipmentItems struct {
-	createShipmentCommand *usecase.CreateShipmentCommand
+	createShipmentItemCommand *usecase.CreateShipmentItemCommand
 }
 
-func NewPostShipmentItems() *PostShipmentItems {
-	return &PostShipmentItems{}
+func NewPostShipmentItems(
+	createShipmentItemCommand *usecase.CreateShipmentItemCommand,
+) *PostShipmentItems {
+	return &PostShipmentItems{
+		createShipmentItemCommand: createShipmentItemCommand,
+	}
 }
 
 func (e *PostShipmentItems) Method() string {
@@ -42,17 +44,28 @@ func (e *PostShipmentItems) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
 
-	nowTime := time.Now()
+	output, err := e.createShipmentItemCommand.Execute(r.Context(), &usecase.CreateShipmentItemCommandInput{
+		ShipmentID: id,
+		Name:       payload.Name,
+	})
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to execute command: %v", err), http.StatusInternalServerError)
+		return
+	}
+
 	shipment := Shipment{
-		ID:    id,
-		State: "pending",
-		Items: []ShipmentItem{
-			{
-				ID:   payload.ID,
-				Name: payload.Name,
-			},
-		},
-		UpdatedAt: &nowTime,
+		ID:        output.ID,
+		State:     output.State,
+		UpdatedAt: output.UpdatedAt,
+		Items:     make([]ShipmentItem, 0, len(output.Items)),
+	}
+
+	for _, item := range output.Items {
+		shipment.Items = append(shipment.Items, ShipmentItem{
+			ID:   item.ID,
+			Name: item.Name,
+		})
 	}
 
 	encoder := json.NewEncoder(w)

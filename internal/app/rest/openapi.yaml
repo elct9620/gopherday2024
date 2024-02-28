@@ -135,12 +135,8 @@ paths:
           application/json:
             schema:
               required:
-                - id
                 - name
               properties:
-                id:
-                  type: string
-                  example: 2add8e3e-2d62-4607-a65a-cc8118accc16
                 name:
                   type: string
                   example: Macbook Max M3 14inch

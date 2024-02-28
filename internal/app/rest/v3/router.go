@@ -37,10 +37,11 @@ func (r *Router) Namespace() string {
 func ProvideRotues(
 	shipmentQuery *usecase.ShipmentQuery,
 	createShipmentCommand *usecase.CreateShipmentCommand,
+	createShipmentItemCommand *usecase.CreateShipmentItemCommand,
 ) []Route {
 	return []Route{
 		NewGetShipment(shipmentQuery),
 		NewPostShipments(createShipmentCommand),
-		NewPostShipmentItems(),
+		NewPostShipmentItems(createShipmentItemCommand),
 	}
 }

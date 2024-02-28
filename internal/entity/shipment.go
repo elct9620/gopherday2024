@@ -16,10 +16,16 @@ const (
 	ShipmentStateDelivered ShipmentState = "delivered"
 )
 
+type ShipmentItem struct {
+	ID   string
+	Name string
+}
+
 type Shipment struct {
 	ID        string
 	State     ShipmentState
 	UpdatedAt *time.Time
+	Items     []ShipmentItem
 
 	// NOTE: to prevent event appened when we are reading the pending events
 	mux           sync.RWMutex
@@ -53,7 +59,18 @@ func (s *Shipment) apply(e event.ShipmentEvent) {
 		s.ID = e.AggregateID()
 		s.State = ShipmentStatePending
 		s.UpdatedAt = &createdAt
+	case *event.ShipmentItemAddedEvent:
+		s.Items = append(s.Items, ShipmentItem{
+			ID:   e.ItemID(),
+			Name: e.Name(),
+		})
 	}
+}
+
+func (s *Shipment) AddItem(id, name string) {
+	event := event.NewShipmentItemAddedEvent(uuid.NewString(), s.ID, id, name, time.Now())
+	s.pendingEvents = append(s.pendingEvents, event)
+	s.apply(event)
 }
 
 func (s *Shipment) PendingEvents() []event.ShipmentEvent {

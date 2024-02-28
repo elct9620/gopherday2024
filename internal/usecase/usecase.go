@@ -7,4 +7,5 @@ var DefaultSet = wire.NewSet(
 	NewCreateEventCommand,
 	NewShipmentQuery,
 	NewCreateShipmentCommand,
+	NewCreateShipmentItemCommand,
 )
