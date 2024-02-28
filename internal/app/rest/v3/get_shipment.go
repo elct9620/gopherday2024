@@ -43,8 +43,15 @@ func (e *GetShipment) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	res := Shipment{
 		ID:        shipment.ID,
 		State:     shipment.State,
-		Items:     []ShipmentItem{},
+		Items:     make([]ShipmentItem, 0, len(shipment.Items)),
 		UpdatedAt: shipment.UpdateAt,
+	}
+
+	for _, item := range shipment.Items {
+		res.Items = append(res.Items, ShipmentItem{
+			ID:   item.ID,
+			Name: item.Name,
+		})
 	}
 
 	encoder := json.NewEncoder(w)

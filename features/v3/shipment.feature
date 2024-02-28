@@ -97,9 +97,15 @@ Feature: Shipments
         "state": "delivered"
       }
       """
+    And I make a POST request to "/v3/shipments/a449b857-5e97-4bee-8ffe-1b544fa4ec5b/items" with the body
+      """
+      {
+        "name": "Macbook Max M3 14inch"
+      }
+      """
     And I make a GET request to "/v3/shipments/a449b857-5e97-4bee-8ffe-1b544fa4ec5b"
     Then the response json should have "id" with value "a449b857-5e97-4bee-8ffe-1b544fa4ec5b"
     And the response json should have "state" with value "delivered"
-    And the response json should have "items"
+    And the response json should have "items[0].name" with value "Macbook Max M3 14inch"
     And the response json should have "updated_at"
     And the response status code should be 200

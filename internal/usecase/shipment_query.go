@@ -11,8 +11,12 @@ type ShipmentQueryInput struct {
 }
 
 type ShipmentQueryOutput struct {
-	ID       string
-	State    string
+	ID    string
+	State string
+	Items []struct {
+		ID   string
+		Name string
+	}
 	UpdateAt *time.Time
 }
 
@@ -41,9 +45,21 @@ func (q *ShipmentQuery) Execute(ctx context.Context, input *ShipmentQueryInput) 
 		return nil, err
 	}
 
-	return &ShipmentQueryOutput{
+	output := &ShipmentQueryOutput{
 		ID:       shipment.ID,
 		State:    string(shipment.State),
 		UpdateAt: shipment.UpdatedAt,
-	}, nil
+	}
+
+	for _, item := range shipment.Items {
+		output.Items = append(output.Items, struct {
+			ID   string
+			Name string
+		}{
+			ID:   item.ID,
+			Name: item.Name,
+		})
+	}
+
+	return output, nil
 }
