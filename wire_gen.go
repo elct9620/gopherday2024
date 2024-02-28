@@ -11,6 +11,7 @@ import (
 	"github.com/elct9620/gopherday2024/internal/app/rest"
 	"github.com/elct9620/gopherday2024/internal/app/rest/v1"
 	"github.com/elct9620/gopherday2024/internal/app/rest/v2"
+	"github.com/elct9620/gopherday2024/internal/app/rest/v3"
 	"github.com/elct9620/gopherday2024/internal/repository"
 	"github.com/elct9620/gopherday2024/internal/usecase"
 	"github.com/go-chi/chi/v5"
@@ -24,9 +25,11 @@ func InitializeTest() (*chi.Mux, error) {
 	createEventCommand := usecase.NewCreateEventCommand(inMemoryEventRepository)
 	v := v1.ProvideRotues(eventQuery, createEventCommand)
 	router := v1.New(v...)
-	v3 := v2.ProvideRotues(eventQuery)
-	v2Router := v2.New(v3...)
-	v4 := app.ProvideRestRouters(router, v2Router)
+	v4 := v2.ProvideRotues(eventQuery)
+	v2Router := v2.New(v4...)
+	v5 := v3.ProvideRotues()
+	v3Router := v3.New(v5...)
+	v6 := app.ProvideRestRouters(router, v2Router, v3Router)
 	t, err := rest.NewOpenApi()
 	if err != nil {
 		return nil, err
@@ -36,6 +39,6 @@ func InitializeTest() (*chi.Mux, error) {
 		return nil, err
 	}
 	openApiMiddleware := rest.ProvideOpenApiMiddleware(routersRouter)
-	mux := rest.NewTest(v4, openApiMiddleware)
+	mux := rest.NewTest(v6, openApiMiddleware)
 	return mux, nil
 }

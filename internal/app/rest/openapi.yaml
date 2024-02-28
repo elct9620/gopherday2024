@@ -73,6 +73,26 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/EventV2'
+  /v3/shipments/{id}:
+    get:
+      tags:
+        - Shipments
+      summary: Get shipment
+      operationId: getShipmentV3
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: a449b857-5e97-4bee-8ffe-1b544fa4ec5b
+      responses:
+        '200':
+          description: return a shipment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShipmentV3'
 components:
   schemas:
     Liveness:
@@ -103,4 +123,43 @@ components:
         created_at:
           type: string
           example: 2024-02-24T15:47:47.206913+08:00
+    ShipmentV3:
+      required:
+        - id
+        - state
+        - items
+        - updated_at
+      type: object
+      properties:
+        id:
+          type: string
+          example: a449b857-5e97-4bee-8ffe-1b544fa4ec5b
+        state:
+          type: string
+          enum:
+            - unknown
+            - pending
+            - shipping
+            - delivered
+          example: pending
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShipmentItemV3'
+        updated_at:
+          type: string
+          nullable: true
+          example: 2024-02-24T15:47:47.206913+08:00
+    ShipmentItemV3:
+      required:
+        - id
+        - name
+      type: object
+      properties:
+        id:
+          type: string
+          example: 09725879-e294-44e7-b296-43f3f5e57c53
+        name:
+          type: string
+          example: Macbook Max M3 14inch
   requestBodies:

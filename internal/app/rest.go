@@ -6,6 +6,7 @@ import (
 	"github.com/elct9620/gopherday2024/internal/app/rest"
 	v1 "github.com/elct9620/gopherday2024/internal/app/rest/v1"
 	v2 "github.com/elct9620/gopherday2024/internal/app/rest/v2"
+	v3 "github.com/elct9620/gopherday2024/internal/app/rest/v3"
 	"github.com/elct9620/gopherday2024/internal/config"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/wire"
@@ -14,6 +15,7 @@ import (
 var RestServerSet = wire.NewSet(
 	v1.RouteSet,
 	v2.RouteSet,
+	v3.RouteSet,
 	ProvideRestRouters,
 	rest.DefaultSet,
 	NewRestServerConfig,
@@ -23,6 +25,7 @@ var RestServerSet = wire.NewSet(
 var RestTestSet = wire.NewSet(
 	v1.RouteSet,
 	v2.RouteSet,
+	v3.RouteSet,
 	ProvideRestRouters,
 	rest.TestSet,
 )
@@ -30,11 +33,13 @@ var RestTestSet = wire.NewSet(
 func ProvideRestRouters(
 	v1Api *v1.Router,
 	v2Api *v2.Router,
+	v3Api *v3.Router,
 ) []rest.Router {
 	return []rest.Router{
 		rest.NewProbeRouter(),
 		v1Api,
 		v2Api,
+		v3Api,
 	}
 }
 

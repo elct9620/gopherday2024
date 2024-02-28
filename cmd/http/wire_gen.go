@@ -11,6 +11,7 @@ import (
 	"github.com/elct9620/gopherday2024/internal/app/rest"
 	"github.com/elct9620/gopherday2024/internal/app/rest/v1"
 	"github.com/elct9620/gopherday2024/internal/app/rest/v2"
+	"github.com/elct9620/gopherday2024/internal/app/rest/v3"
 	"github.com/elct9620/gopherday2024/internal/config"
 	"github.com/elct9620/gopherday2024/internal/repository"
 	"github.com/elct9620/gopherday2024/internal/usecase"
@@ -28,9 +29,11 @@ func Initialize() (*app.RestServer, func(), error) {
 	createEventCommand := usecase.NewCreateEventCommand(boltEventRepository)
 	v := v1.ProvideRotues(eventQuery, createEventCommand)
 	router := v1.New(v...)
-	v3 := v2.ProvideRotues(eventQuery)
-	v2Router := v2.New(v3...)
-	v4 := app.ProvideRestRouters(router, v2Router)
+	v4 := v2.ProvideRotues(eventQuery)
+	v2Router := v2.New(v4...)
+	v5 := v3.ProvideRotues()
+	v3Router := v3.New(v5...)
+	v6 := app.ProvideRestRouters(router, v2Router, v3Router)
 	t, err := rest.NewOpenApi()
 	if err != nil {
 		cleanup()
@@ -42,7 +45,7 @@ func Initialize() (*app.RestServer, func(), error) {
 		return nil, nil, err
 	}
 	openApiMiddleware := rest.ProvideOpenApiMiddleware(routersRouter)
-	mux := rest.New(v4, openApiMiddleware)
+	mux := rest.New(v6, openApiMiddleware)
 	viper, err := config.ProvideViper()
 	if err != nil {
 		cleanup()
