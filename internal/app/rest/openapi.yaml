@@ -117,6 +117,40 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ShipmentV3'
+  /v3/shipments/{id}/items:
+    post:
+      tags:
+        - Shipments
+      summary: Add shipment itme
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: a449b857-5e97-4bee-8ffe-1b544fa4ec5b
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - id
+                - name
+              properties:
+                id:
+                  type: string
+                  example: 2add8e3e-2d62-4607-a65a-cc8118accc16
+                name:
+                  type: string
+                  example: Macbook Max M3 14inch
+      responses:
+        '200':
+          description: return a shipment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShipmentV3'
 components:
   schemas:
     Liveness:

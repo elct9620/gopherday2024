@@ -41,5 +41,6 @@ func ProvideRotues(
 	return []Route{
 		NewGetShipment(shipmentQuery),
 		NewPostShipments(createShipmentCommand),
+		NewPostShipmentItems(),
 	}
 }
