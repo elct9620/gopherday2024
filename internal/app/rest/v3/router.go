@@ -2,6 +2,7 @@ package v3
 
 import (
 	"github.com/elct9620/gopherday2024/internal/app/rest"
+	"github.com/elct9620/gopherday2024/internal/usecase"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/wire"
 )
@@ -33,8 +34,10 @@ func (r *Router) Namespace() string {
 	return "/v3"
 }
 
-func ProvideRotues() []Route {
+func ProvideRotues(
+	shipmentQuery *usecase.ShipmentQuery,
+) []Route {
 	return []Route{
-		NewGetShipment(),
+		NewGetShipment(shipmentQuery),
 	}
 }
