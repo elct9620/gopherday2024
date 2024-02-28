@@ -45,6 +45,15 @@ func (feat *HttpFeature) iMakeAPOSTRequestToWithTheBody(url string, doc *godog.D
 	return nil
 }
 
+func (feat *HttpFeature) iMakeAPUTRequestToWithTheBody(url string, doc *godog.DocString) error {
+	req := httptest.NewRequest("PUT", url, strings.NewReader(doc.Content))
+	req.Header.Add("Content-Type", "application/json")
+	feat.response = httptest.NewRecorder()
+
+	feat.server.ServeHTTP(feat.response, req)
+	return nil
+}
+
 func (feat *HttpFeature) theResponseStatusCodeShouldBe(statusCode int) error {
 	if feat.response.Code != statusCode {
 		return fmt.Errorf("expected response code to be %d, but actual is %d", statusCode, feat.response.Code)
@@ -128,6 +137,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 
 	ctx.Step(`^I make a GET request to "([^"]*)"$`, httpFeat.iMakeAGETRequestTo)
 	ctx.Step(`^I make a POST request to "([^"]*)" with the body$`, httpFeat.iMakeAPOSTRequestToWithTheBody)
+	ctx.Step(`^I make a PUT request to "([^"]*)" with the body$`, httpFeat.iMakeAPUTRequestToWithTheBody)
 	ctx.Step(`^the response status code should be (\d+)$`, httpFeat.theResponseStatusCodeShouldBe)
 	ctx.Step(`^the response body should be$`, httpFeat.theResponseBodyShouldBe)
 	ctx.Step(`^the response json should have "([^"]*)"$`, httpFeat.theResponseJsonShouldHave)

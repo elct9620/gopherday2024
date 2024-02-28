@@ -43,5 +43,6 @@ func ProvideRotues(
 		NewGetShipment(shipmentQuery),
 		NewPostShipments(createShipmentCommand),
 		NewPostShipmentItems(createShipmentItemCommand),
+		NewPutShipment(),
 	}
 }
