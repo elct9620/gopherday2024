@@ -24,3 +24,17 @@ Feature: Shipments
     And the response json should have "items"
     And the response json should have "updated_at"
     And the response status code should be 200
+
+  Scenario: When post the "/v3/shipments" then it should be able to get the shipment
+    When I make a POST request to "/v3/shipments" with the body
+      """
+      {
+        "id": "a449b857-5e97-4bee-8ffe-1b544fa4ec5b"
+      }
+      """
+    And I make a GET request to "/v3/shipments/a449b857-5e97-4bee-8ffe-1b544fa4ec5b"
+    Then the response json should have "id" with value "a449b857-5e97-4bee-8ffe-1b544fa4ec5b"
+    And the response json should have "state" with value "pending"
+    And the response json should have "items"
+    And the response json should have "updated_at"
+    And the response status code should be 200
