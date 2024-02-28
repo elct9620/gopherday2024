@@ -35,3 +35,9 @@ go run ./cmd/grpc
 
 > You can use [grpcurl](https://github.com/fullstorydev/grpcurl) to interact with the gRPC server.
 > Example: `grpcurl -plaintext localhost:8080 events.Events/List`
+
+## Future Discussions
+
+* The `internal/event` is entity?
+* Where to define the application errors is better?
+* How to split into domains?
