@@ -64,11 +64,27 @@ func (s *Shipment) apply(e event.ShipmentEvent) {
 			ID:   e.ItemID(),
 			Name: e.Name(),
 		})
+	case *event.ShipmentShippingEvent:
+		s.State = ShipmentStateShipping
+	case *event.ShipmentDeliveredEvent:
+		s.State = ShipmentStateDelivered
 	}
 }
 
 func (s *Shipment) AddItem(id, name string) {
 	event := event.NewShipmentItemAddedEvent(uuid.NewString(), s.ID, id, name, time.Now())
+	s.pendingEvents = append(s.pendingEvents, event)
+	s.apply(event)
+}
+
+func (s *Shipment) ShipAt(time time.Time) {
+	event := event.NewShipmentShippingEvent(uuid.NewString(), s.ID, time)
+	s.pendingEvents = append(s.pendingEvents, event)
+	s.apply(event)
+}
+
+func (s *Shipment) DeliveredAt(time time.Time) {
+	event := event.NewShipmentDeliveredEvent(uuid.NewString(), s.ID, time)
 	s.pendingEvents = append(s.pendingEvents, event)
 	s.apply(event)
 }

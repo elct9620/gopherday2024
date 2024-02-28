@@ -45,3 +45,31 @@ func (e *ShipmentItemAddedEvent) ItemID() string {
 func (e *ShipmentItemAddedEvent) Name() string {
 	return e.name
 }
+
+type ShipmentShippingEvent struct {
+	event
+}
+
+func NewShipmentShippingEvent(id, aggregateID string, createdAt time.Time) *ShipmentShippingEvent {
+	return &ShipmentShippingEvent{
+		event: event{
+			id:          id,
+			aggregateID: aggregateID,
+			createdAt:   createdAt,
+		},
+	}
+}
+
+type ShipmentDeliveredEvent struct {
+	event
+}
+
+func NewShipmentDeliveredEvent(id, aggregateID string, createdAt time.Time) *ShipmentDeliveredEvent {
+	return &ShipmentDeliveredEvent{
+		event: event{
+			id:          id,
+			aggregateID: aggregateID,
+			createdAt:   createdAt,
+		},
+	}
+}

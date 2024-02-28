@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 
+	"github.com/elct9620/gopherday2024/internal/usecase"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -14,10 +14,15 @@ type PutShipmentPayload struct {
 }
 
 type PutShipment struct {
+	changeShipmentStateCommand *usecase.ChangeShipmentStateCommand
 }
 
-func NewPutShipment() *PutShipment {
-	return &PutShipment{}
+func NewPutShipment(
+	changeShipmentStateCommand *usecase.ChangeShipmentStateCommand,
+) *PutShipment {
+	return &PutShipment{
+		changeShipmentStateCommand: changeShipmentStateCommand,
+	}
 }
 
 func (e *PutShipment) Method() string {
@@ -39,12 +44,28 @@ func (e *PutShipment) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
 
-	updatedAt := time.Now()
+	output, err := e.changeShipmentStateCommand.Execute(r.Context(), &usecase.ChangeShipmentStateCommandInput{
+		ShipmentID: id,
+		State:      payload.State,
+	})
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to change shipment state: %v", err), http.StatusInternalServerError)
+		return
+	}
+
 	shipment := Shipment{
-		ID:        id,
-		State:     payload.State,
+		ID:        output.ID,
+		State:     output.State,
+		UpdatedAt: output.UpdatedAt,
 		Items:     []ShipmentItem{},
-		UpdatedAt: &updatedAt,
+	}
+
+	for _, item := range output.Items {
+		shipment.Items = append(shipment.Items, ShipmentItem{
+			ID:   item.ID,
+			Name: item.Name,
+		})
 	}
 
 	encoder := json.NewEncoder(w)

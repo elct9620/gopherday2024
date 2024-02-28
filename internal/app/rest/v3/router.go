@@ -38,11 +38,12 @@ func ProvideRotues(
 	shipmentQuery *usecase.ShipmentQuery,
 	createShipmentCommand *usecase.CreateShipmentCommand,
 	createShipmentItemCommand *usecase.CreateShipmentItemCommand,
+	changeShipmentStateCommand *usecase.ChangeShipmentStateCommand,
 ) []Route {
 	return []Route{
 		NewGetShipment(shipmentQuery),
 		NewPostShipments(createShipmentCommand),
 		NewPostShipmentItems(createShipmentItemCommand),
-		NewPutShipment(),
+		NewPutShipment(changeShipmentStateCommand),
 	}
 }
