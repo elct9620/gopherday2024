@@ -4,6 +4,7 @@ go 1.21
 
 require (
 	github.com/cucumber/godog v0.14.0
+	github.com/getkin/kin-openapi v0.123.0
 	github.com/go-chi/chi/v5 v5.0.12
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
@@ -11,14 +12,13 @@ require (
 	github.com/spf13/viper v1.18.2
 	go.etcd.io/bbolt v1.3.8
 	google.golang.org/grpc v1.62.0
-	google.golang.org/protobuf v1.32.0
+	google.golang.org/protobuf v1.33.0
 )
 
 require (
 	github.com/cucumber/gherkin/go/v26 v26.2.0 // indirect
 	github.com/cucumber/messages/go/v21 v21.0.1 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
-	github.com/getkin/kin-openapi v0.123.0 // indirect
 	github.com/go-openapi/jsonpointer v0.20.2 // indirect
 	github.com/go-openapi/swag v0.22.9 // indirect
 	github.com/gofrs/uuid v4.4.0+incompatible // indirect
