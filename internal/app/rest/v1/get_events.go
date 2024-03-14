@@ -44,9 +44,7 @@ func (e *GetEvents) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	encoder := json.NewEncoder(w)
-	if err := encoder.Encode(events); err != nil {
+	if err := json.NewEncoder(w).Encode(events); err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
 	}
 }

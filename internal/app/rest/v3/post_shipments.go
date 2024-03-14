@@ -56,8 +56,7 @@ func (e *PostShipments) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt: output.UpdatedAt,
 	}
 
-	encoder := json.NewEncoder(w)
-	if err := encoder.Encode(shipment); err != nil {
+	if err := json.NewEncoder(w).Encode(shipment); err != nil {
 		http.Error(w, fmt.Sprintf("failed to encode response: %v", err), http.StatusInternalServerError)
 	}
 }

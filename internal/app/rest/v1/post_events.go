@@ -54,13 +54,8 @@ func (e *PostEvents) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		ID: res.ID,
 	}
 
-	enc := json.NewEncoder(w)
-	err = enc.Encode(response)
-
-	if err != nil {
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	w.WriteHeader(http.StatusOK)
 }

@@ -54,8 +54,7 @@ func (e *GetShipment) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	encoder := json.NewEncoder(w)
-	if err := encoder.Encode(res); err != nil {
+	if err := json.NewEncoder(w).Encode(res); err != nil {
 		http.Error(w, fmt.Sprintf("failed to encode response: %v", err), http.StatusInternalServerError)
 	}
 }
